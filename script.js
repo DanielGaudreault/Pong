@@ -92,19 +92,26 @@ const ball = {
     color: '#FFFFFF'
 };
 
-// Event listeners
-p1v1Btn.addEventListener('click', () => startGame('1v1'));
-p1vaiBtn.addEventListener('click', () => startGame('1vai'));
-aivaiBtn.addEventListener('click', () => startGame('aivai'));
-menuBtn.addEventListener('click', returnToMenu);
-rematchBtn.addEventListener('click', rematch);
-winningScoreSelect.addEventListener('change', () => {
-    winningScore = parseInt(winningScoreSelect.value);
-});
+// Initialize game
+function init() {
+    // Event listeners
+    p1v1Btn.addEventListener('click', () => startGame('1v1'));
+    p1vaiBtn.addEventListener('click', () => startGame('1vai'));
+    aivaiBtn.addEventListener('click', () => startGame('aivai'));
+    menuBtn.addEventListener('click', returnToMenu);
+    rematchBtn.addEventListener('click', rematch);
+    winningScoreSelect.addEventListener('change', () => {
+        winningScore = parseInt(winningScoreSelect.value);
+    });
 
-// Keyboard controls
-document.addEventListener('keydown', handleKeyDown);
-document.addEventListener('keyup', handleKeyUp);
+    // Keyboard controls
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+
+    // Show menu initially
+    menuScreen.classList.remove('hidden');
+    scoreDisplay.classList.add('hidden');
+}
 
 function handleKeyDown(e) {
     // Pause game with Escape key
@@ -145,7 +152,9 @@ function handleKeyUp(e) {
 }
 
 function startGame(mode) {
-    console.log(`Starting game in ${mode} mode`); // Debug log
+    console.log(`Starting game in ${mode} mode`);
+    
+    // Reset game state
     gameMode = mode;
     gameRunning = true;
     gamePaused = false;
@@ -163,30 +172,36 @@ function startGame(mode) {
     player2.y = canvas.height / 2 - PADDLE_HEIGHT / 2;
     
     resetBall();
+    
+    // Update UI
     menuScreen.classList.add('hidden');
     gameOverScreen.classList.add('hidden');
     pauseScreen.classList.add('hidden');
-    scoreDisplay.style.display = 'flex';
+    scoreDisplay.classList.remove('hidden');
     updateScoreDisplay();
     
-    // Start the game loop
+    // Cancel any existing animation frame
     if (animationId) {
         cancelAnimationFrame(animationId);
     }
+    
+    // Start game loop
     animate();
 }
 
 function returnToMenu() {
     gameRunning = false;
     gamePaused = false;
+    
     if (animationId) {
         cancelAnimationFrame(animationId);
         animationId = null;
     }
+    
     menuScreen.classList.remove('hidden');
     gameOverScreen.classList.add('hidden');
     pauseScreen.classList.add('hidden');
-    scoreDisplay.style.display = 'none';
+    scoreDisplay.classList.add('hidden');
 }
 
 function rematch() {
@@ -212,7 +227,7 @@ function resetBall() {
     ball.y = canvas.height / 2;
     
     // Random direction but not too vertical
-    const angle = (Math.random() * Math.PI/3) - Math.PI/6; // -30 to 30 degrees
+    const angle = (Math.random() * Math.PI/3) - Math.PI/6;
     const direction = Math.random() > 0.5 ? 1 : -1;
     
     ball.dx = direction * ballSpeed * Math.cos(angle);
@@ -297,28 +312,19 @@ function moveAI(paddle, ball, difficultyFactor) {
     const paddleCenter = paddle.y + paddle.height / 2;
     const ballCenter = ball.y + ball.size / 2;
     
-    // Only move if ball is coming towards the paddle
     if ((paddle === player1 && ball.dx < 0) || (paddle === player2 && ball.dx > 0)) {
-        // Calculate where the ball will intersect with the paddle's x-position
         const timeToReachPaddle = Math.abs((paddle.x - ball.x) / ball.dx);
         const predictedY = ball.y + ball.dy * timeToReachPaddle;
-        
-        // Adjust for difficulty
         const reactionError = (1 - difficultyFactor) * 100;
         const targetY = predictedY + (Math.random() * reactionError * 2 - reactionError);
+        const boundedTarget = Math.max(paddle.height/2, Math.min(canvas.height - paddle.height/2, targetY));
         
-        // Keep target within bounds
-        const boundedTarget = Math.max(paddle.height/2, 
-                                     Math.min(canvas.height - paddle.height/2, targetY));
-        
-        // Move paddle towards target
         if (paddleCenter < boundedTarget - 5) {
             paddle.y += PADDLE_SPEED * difficultyFactor;
         } else if (paddleCenter > boundedTarget + 5) {
             paddle.y -= PADDLE_SPEED * difficultyFactor;
         }
     } else {
-        // Return to center when ball is moving away
         const centerY = canvas.height / 2 - paddle.height / 2;
         if (paddle.y < centerY - 10) {
             paddle.y += PADDLE_SPEED * 0.5;
@@ -369,7 +375,7 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Draw center line with glow effect
+    // Draw center line
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
     ctx.setLineDash([20, 15]);
     ctx.lineWidth = 4;
@@ -380,50 +386,14 @@ function draw() {
     ctx.setLineDash([]);
     ctx.lineWidth = 1;
     
-    // Draw paddles with 3D effect
-    drawPaddle(player1);
-    drawPaddle(player2);
+    // Draw paddles
+    ctx.fillStyle = player1.color;
+    ctx.fillRect(player1.x, player1.y, player1.width, player1.height);
     
-    // Draw ball with glow effect
-    drawBall(ball);
-}
-
-function drawPaddle(paddle) {
-    // Paddle main body
-    ctx.fillStyle = paddle.color;
-    ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+    ctx.fillStyle = player2.color;
+    ctx.fillRect(player2.x, player2.y, player2.width, player2.height);
     
-    // Paddle border
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(paddle.x, paddle.y, paddle.width, paddle.height);
-    
-    // Paddle inner highlight
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.fillRect(paddle.x + 2, paddle.y + 2, paddle.width - 4, paddle.height - 4);
-}
-
-function drawBall(ball) {
-    // Ball glow effect
-    const gradient = ctx.createRadialGradient(
-        ball.x + ball.size/2, ball.y + ball.size/2, 0,
-        ball.x + ball.size/2, ball.y + ball.size/2, ball.size*2
-    );
-    gradient.addColorStop(0, ball.color);
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-    
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(
-        ball.x + ball.size/2, 
-        ball.y + ball.size/2, 
-        ball.size*2, 
-        0, 
-        Math.PI * 2
-    );
-    ctx.fill();
-    
-    // Ball main body
+    // Draw ball
     ctx.fillStyle = ball.color;
     ctx.fillRect(ball.x, ball.y, ball.size, ball.size);
 }
@@ -437,6 +407,5 @@ function animate() {
     }
 }
 
-// Initialize game
-menuScreen.classList.remove('hidden');
-scoreDisplay.style.display = 'none';
+// Start the game
+init();
