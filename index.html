@@ -9,49 +9,19 @@
 <body>
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
+        
         <div id="menu" class="screen">
             <h1>PONG</h1>
             <div class="menu-options">
-                <button id="1v1-btn">1 vs 1</button>
-                <button id="1vai-btn">1 vs AI</button>
-                <button id="aivai-btn">AI vs AI</button>
-                <div class="settings">
-                    <div class="setting-group">
-                        <label for="difficulty">Difficulty:</label>
-                        <select id="difficulty">
-                            <option value="easy">Easy</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="hard">Hard</option>
-                            <option value="impossible">Impossible</option>
-                        </select>
-                    </div>
-                    <div class="setting-group">
-                        <label for="winning-score">Points to Win:</label>
-                        <select id="winning-score">
-                            <option value="5">5</option>
-                            <option value="7" selected>7</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                        </select>
-                    </div>
-                </div>
+                <button id="btn-1v1">1 vs 1</button>
+                <button id="btn-1vai">1 vs AI</button>
+                <button id="btn-aivai">AI vs AI</button>
             </div>
         </div>
+        
         <div id="game-over" class="screen hidden">
             <h2 id="winner-text"></h2>
-            <div id="final-score"></div>
-            <div class="button-group">
-                <button id="menu-btn">Main Menu</button>
-                <button id="rematch-btn">Rematch</button>
-            </div>
-        </div>
-        <div id="pause-screen" class="screen hidden">
-            <h2>PAUSED</h2>
-            <p>Press ESC to continue</p>
-        </div>
-        <div id="score-display" class="hidden">
-            <div id="player1-score">0</div>
-            <div id="player2-score">0</div>
+            <button id="btn-menu">Main Menu</button>
         </div>
     </div>
     <script src="script.js"></script>
