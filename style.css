@@ -4,38 +4,26 @@
     box-sizing: border-box;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
 body {
-    font-family: 'Orbitron', 'Arial', sans-serif;
+    font-family: Arial, sans-serif;
     background-color: #000;
-    color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    touch-action: none;
-}
-
-#game-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
     height: 100vh;
     overflow: hidden;
 }
 
-#game-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
+#game-container {
+    position: relative;
     width: 100%;
     height: 100%;
+}
+
+#game-canvas {
     display: block;
+    width: 100%;
+    height: 100%;
     background-color: #000;
 }
 
@@ -49,187 +37,35 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.9);
-    z-index: 100;
-    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
 }
 
 #menu h1 {
-    font-size: clamp(3rem, 10vw, 6rem);
+    font-size: 4rem;
     margin-bottom: 2rem;
-    color: #fff;
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff;
-    animation: pulse 2s infinite;
-    text-align: center;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
 }
 
 .menu-options {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    align-items: center;
-    width: min(100%, 400px);
-}
-
-.settings {
-    width: 100%;
-    margin-top: 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1.5rem;
-    border-radius: 10px;
-}
-
-.setting-group {
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.setting-group label {
-    margin-right: 1rem;
-    font-size: 0.9rem;
-}
-
-select {
-    padding: 0.5rem;
-    background: #333;
-    color: white;
-    border: 1px solid #555;
-    border-radius: 5px;
-    min-width: 120px;
+    gap: 1rem;
 }
 
 button {
     padding: 1rem 2rem;
     font-size: 1.2rem;
-    background: linear-gradient(145deg, #444, #222);
-    color: white;
+    background-color: white;
+    color: black;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: all 0.3s;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 button:hover {
-    background: linear-gradient(145deg, #555, #333);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
-}
-
-#game-over h2 {
-    font-size: clamp(2rem, 8vw, 4rem);
-    margin-bottom: 1rem;
-    color: #4CAF50;
-    text-shadow: 0 0 5px #4CAF50;
-    text-align: center;
-}
-
-#final-score {
-    font-size: clamp(1.5rem, 6vw, 2.5rem);
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.button-group {
-    display: flex;
-    gap: 1rem;
-    width: min(100%, 400px);
-}
-
-.button-group button {
-    flex: 1;
-}
-
-#pause-screen h2 {
-    font-size: clamp(2rem, 10vw, 5rem);
-    margin-bottom: 1rem;
-    color: #fff;
-    text-shadow: 0 0 10px #fff;
-}
-
-#pause-screen p {
-    font-size: clamp(1rem, 4vw, 1.5rem);
-    color: #aaa;
-}
-
-#score-display {
-    position: fixed;
-    top: 20px;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 5%;
-    z-index: 10;
-    pointer-events: none;
-}
-
-#player1-score, #player2-score {
-    font-size: clamp(2rem, 8vw, 4rem);
-    font-weight: bold;
-    color: white;
-    text-shadow: 0 0 10px currentColor;
-    opacity: 0.8;
-}
-
-#player1-score {
-    color: #4CAF50;
-}
-
-#player2-score {
-    color: #2196F3;
+    background-color: #ddd;
 }
 
 .hidden {
-    display: none !important;
-}
-
-/* Mobile controls */
-.mobile-controls {
-    position: fixed;
-    bottom: 20px;
-    left: 0;
-    width: 100%;
     display: none;
-    justify-content: space-between;
-    padding: 0 20px;
-    z-index: 50;
-}
-
-.mobile-btn {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    color: white;
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-@media (max-width: 768px) {
-    .mobile-controls {
-        display: flex;
-    }
-    
-    .button-group {
-        flex-direction: column;
-    }
-    
-    button {
-        padding: 0.8rem;
-    }
 }
