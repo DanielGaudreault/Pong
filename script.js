@@ -93,13 +93,26 @@ const ball = {
 };
 
 // Initialize game
-function init() {
-    // Event listeners
-    p1v1Btn.addEventListener('click', () => startGame('1v1'));
-    p1vaiBtn.addEventListener('click', () => startGame('1vai'));
-    aivaiBtn.addEventListener('click', () => startGame('aivai'));
+function initGame() {
+    // Set up event listeners
+    p1v1Btn.addEventListener('click', () => {
+        console.log('1v1 button clicked');
+        startGame('1v1');
+    });
+    
+    p1vaiBtn.addEventListener('click', () => {
+        console.log('1vai button clicked');
+        startGame('1vai');
+    });
+    
+    aivaiBtn.addEventListener('click', () => {
+        console.log('aivai button clicked');
+        startGame('aivai');
+    });
+    
     menuBtn.addEventListener('click', returnToMenu);
     rematchBtn.addEventListener('click', rematch);
+    
     winningScoreSelect.addEventListener('change', () => {
         winningScore = parseInt(winningScoreSelect.value);
     });
@@ -110,7 +123,11 @@ function init() {
 
     // Show menu initially
     menuScreen.classList.remove('hidden');
+    gameOverScreen.classList.add('hidden');
+    pauseScreen.classList.add('hidden');
     scoreDisplay.classList.add('hidden');
+    
+    console.log('Game initialized');
 }
 
 function handleKeyDown(e) {
@@ -154,7 +171,7 @@ function handleKeyUp(e) {
 function startGame(mode) {
     console.log(`Starting game in ${mode} mode`);
     
-    // Reset game state
+    // Set game mode and reset state
     gameMode = mode;
     gameRunning = true;
     gamePaused = false;
@@ -170,7 +187,6 @@ function startGame(mode) {
     // Reset positions
     player1.y = canvas.height / 2 - PADDLE_HEIGHT / 2;
     player2.y = canvas.height / 2 - PADDLE_HEIGHT / 2;
-    
     resetBall();
     
     // Update UI
@@ -190,6 +206,7 @@ function startGame(mode) {
 }
 
 function returnToMenu() {
+    console.log('Returning to menu');
     gameRunning = false;
     gamePaused = false;
     
@@ -205,6 +222,7 @@ function returnToMenu() {
 }
 
 function rematch() {
+    console.log('Rematch requested');
     gameOverScreen.classList.add('hidden');
     startGame(gameMode);
 }
@@ -214,9 +232,11 @@ function togglePause() {
     
     gamePaused = !gamePaused;
     if (gamePaused) {
+        console.log('Game paused');
         pauseScreen.classList.remove('hidden');
         cancelAnimationFrame(animationId);
     } else {
+        console.log('Game resumed');
         pauseScreen.classList.add('hidden');
         animate();
     }
@@ -407,5 +427,8 @@ function animate() {
     }
 }
 
-// Start the game
-init();
+// Start the game when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded');
+    initGame();
+});
