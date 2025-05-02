@@ -144,85 +144,8 @@ function handleKeyUp(e) {
     }
 }
 
-// Touch controls for mobile
-let touchStartY = {};
-const mobileUpBtn1 = document.createElement('div');
-const mobileDownBtn1 = document.createElement('div');
-const mobileUpBtn2 = document.createElement('div');
-const mobileDownBtn2 = document.createElement('div');
-
-function setupMobileControls() {
-    const mobileControls = document.createElement('div');
-    mobileControls.className = 'mobile-controls';
-    
-    mobileUpBtn1.className = 'mobile-btn';
-    mobileUpBtn1.textContent = '↑';
-    mobileUpBtn1.style.marginRight = 'auto';
-    mobileDownBtn1.className = 'mobile-btn';
-    mobileDownBtn1.textContent = '↓';
-    mobileDownBtn1.style.marginRight = 'auto';
-    
-    mobileUpBtn2.className = 'mobile-btn';
-    mobileUpBtn2.textContent = '↑';
-    mobileDownBtn2.className = 'mobile-btn';
-    mobileDownBtn2.textContent = '↓';
-    
-    if (gameMode === '1v1') {
-        const player1Controls = document.createElement('div');
-        player1Controls.style.display = 'flex';
-        player1Controls.appendChild(mobileUpBtn1);
-        player1Controls.appendChild(mobileDownBtn1);
-        
-        const player2Controls = document.createElement('div');
-        player2Controls.style.display = 'flex';
-        player2Controls.appendChild(mobileUpBtn2);
-        player2Controls.appendChild(mobileDownBtn2);
-        
-        mobileControls.appendChild(player1Controls);
-        mobileControls.appendChild(player2Controls);
-    } else {
-        mobileControls.appendChild(mobileUpBtn1);
-        mobileControls.appendChild(mobileDownBtn1);
-    }
-    
-    document.body.appendChild(mobileControls);
-    
-    // Touch event handlers
-    mobileUpBtn1.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        player1.dy = -PADDLE_SPEED;
-    });
-    
-    mobileDownBtn1.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        player1.dy = PADDLE_SPEED;
-    });
-    
-    mobileUpBtn2.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        player2.dy = -PADDLE_SPEED;
-    });
-    
-    mobileDownBtn2.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        player2.dy = PADDLE_SPEED;
-    });
-    
-    // Touch end handlers
-    const handleTouchEnd = (e) => {
-        e.preventDefault();
-        player1.dy = 0;
-        player2.dy = 0;
-    };
-    
-    mobileUpBtn1.addEventListener('touchend', handleTouchEnd);
-    mobileDownBtn1.addEventListener('touchend', handleTouchEnd);
-    mobileUpBtn2.addEventListener('touchend', handleTouchEnd);
-    mobileDownBtn2.addEventListener('touchend', handleTouchEnd);
-}
-
-// Game functions
 function startGame(mode) {
+    console.log(`Starting game in ${mode} mode`); // Debug log
     gameMode = mode;
     gameRunning = true;
     gamePaused = false;
@@ -246,27 +169,24 @@ function startGame(mode) {
     scoreDisplay.style.display = 'flex';
     updateScoreDisplay();
     
-    // Setup mobile controls if needed
-    if (window.innerWidth <= 768) {
-        setupMobileControls();
+    // Start the game loop
+    if (animationId) {
+        cancelAnimationFrame(animationId);
     }
-    
     animate();
 }
 
 function returnToMenu() {
     gameRunning = false;
-    cancelAnimationFrame(animationId);
+    gamePaused = false;
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
     menuScreen.classList.remove('hidden');
     gameOverScreen.classList.add('hidden');
     pauseScreen.classList.add('hidden');
     scoreDisplay.style.display = 'none';
-    
-    // Remove mobile controls
-    const mobileControls = document.querySelector('.mobile-controls');
-    if (mobileControls) {
-        mobileControls.remove();
-    }
 }
 
 function rematch() {
@@ -306,6 +226,8 @@ function resetBall() {
 }
 
 function update() {
+    if (gamePaused) return;
+    
     // Move paddles
     player1.y += player1.dy;
     player2.y += player2.dy;
@@ -336,8 +258,6 @@ function update() {
         const hitPosition = (ball.y - (player1.y + player1.height/2)) / (player1.height/2);
         ball.dx = Math.abs(ball.dx) * 1.05;
         ball.dy = hitPosition * ballSpeed * 1.5;
-        
-        // Add slight speed increase after each hit (with max limit)
         ballSpeed = Math.min(ballSpeed * 1.02, MAX_BALL_SPEED);
     }
     
@@ -345,8 +265,6 @@ function update() {
         const hitPosition = (ball.y - (player2.y + player2.height/2)) / (player2.height/2);
         ball.dx = -Math.abs(ball.dx) * 1.05;
         ball.dy = hitPosition * ballSpeed * 1.5;
-        
-        // Add slight speed increase after each hit (with max limit)
         ballSpeed = Math.min(ballSpeed * 1.02, MAX_BALL_SPEED);
     }
     
@@ -386,7 +304,7 @@ function moveAI(paddle, ball, difficultyFactor) {
         const predictedY = ball.y + ball.dy * timeToReachPaddle;
         
         // Adjust for difficulty
-        const reactionError = (1 - difficultyFactor) * 100; // More error on lower difficulty
+        const reactionError = (1 - difficultyFactor) * 100;
         const targetY = predictedY + (Math.random() * reactionError * 2 - reactionError);
         
         // Keep target within bounds
@@ -435,12 +353,6 @@ function checkGameOver() {
         
         finalScore.textContent = `${player1Score} - ${player2Score}`;
         gameOverScreen.classList.remove('hidden');
-        
-        // Remove mobile controls
-        const mobileControls = document.querySelector('.mobile-controls');
-        if (mobileControls) {
-            mobileControls.remove();
-        }
     }
 }
 
@@ -517,12 +429,10 @@ function drawBall(ball) {
 }
 
 function animate() {
-    if (!gamePaused) {
-        update();
-    }
+    update();
     draw();
     
-    if (gameRunning) {
+    if (gameRunning && !gamePaused) {
         animationId = requestAnimationFrame(animate);
     }
 }
