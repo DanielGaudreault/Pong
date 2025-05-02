@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple Pong</title>
+    <title>Pong with Menu</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
             background: #000;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -14,11 +15,106 @@
         }
         canvas {
             border: 2px solid white;
+            display: none;
+        }
+        #menu {
+            text-align: center;
+            color: white;
+        }
+        #menu h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+        }
+        .menu-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #ddd;
+        }
+        .settings {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+        }
+        select {
+            padding: 5px;
+            margin-left: 10px;
+        }
+        #game-over {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #score-display {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            color: white;
+            font-size: 2em;
         }
     </style>
 </head>
 <body>
+    <div id="menu">
+        <h1>PONG</h1>
+        <div class="menu-options">
+            <button id="btn-1v1">1 vs 1</button>
+            <button id="btn-1vai">1 vs AI</button>
+        </div>
+        <div class="settings">
+            <div>
+                <label>Difficulty:</label>
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+            <div>
+                <label>Score to Win:</label>
+                <select id="score-cap">
+                    <option value="5">5</option>
+                    <option value="7" selected>7</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
     <canvas id="gameCanvas" width="800" height="500"></canvas>
+    
+    <div id="score-display">
+        <span id="left-score">0</span>
+        <span id="right-score">0</span>
+    </div>
+    
+    <div id="game-over">
+        <h2 id="winner-text">Player 1 Wins!</h2>
+        <button id="btn-menu">Back to Menu</button>
+    </div>
+    
     <script src="game.js"></script>
 </body>
 </html>
